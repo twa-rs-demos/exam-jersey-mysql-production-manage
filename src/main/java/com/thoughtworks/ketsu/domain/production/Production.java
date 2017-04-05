@@ -1,9 +1,9 @@
-package com.thoughtworks.ketsu.domain.item;
+package com.thoughtworks.ketsu.domain.production;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Item {
+public class Production {
     private int id;
     private double price;
     private String name;

@@ -26,7 +26,7 @@ public class CategoryApi {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response insertCategory(Map data) {
+    public Response insert(Map data) {
         String name = (String) data.get("name");
 
         Category category = new Category();
@@ -44,7 +44,7 @@ public class CategoryApi {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteCategoryById(@PathParam("id") Integer id) {
+    public Response deleteById(@PathParam("id") Integer id) {
         try {
             categoryMapper.deleteCategoryById(id);
             session.commit();
@@ -61,10 +61,9 @@ public class CategoryApi {
     @PUT
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateCategory(
-            @PathParam("id") Integer id, @QueryParam("name") String name) {
+    public Response update(@PathParam("id") Integer id, Map data) {
         Category category = new Category();
-        category.setName(name);
+        category.setName((String) data.get("name"));
         category.setId(id);
 
         categoryMapper.updateCategory(category);
@@ -76,7 +75,7 @@ public class CategoryApi {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findCategoryId(
+    public Response findById(
             @PathParam("id") Integer id) {
         Category category = categoryMapper.findCategoryById(id);
         if (category == null) {
@@ -96,7 +95,7 @@ public class CategoryApi {
                 .collect(Collectors.toList());
 
         Map result = new HashMap();
-        result.put("items", categories);
+        result.put("categories", categories);
         result.put("totalCount", categories.size());
 
         return Response.status(Response.Status.OK)

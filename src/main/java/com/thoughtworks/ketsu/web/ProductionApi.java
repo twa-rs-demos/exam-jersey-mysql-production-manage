@@ -1,7 +1,7 @@
 package com.thoughtworks.ketsu.web;
 
-import com.thoughtworks.ketsu.domain.item.Item;
-import com.thoughtworks.ketsu.infrastructure.mybatis.mappers.ItemMapper;
+import com.thoughtworks.ketsu.domain.production.Production;
+import com.thoughtworks.ketsu.infrastructure.mybatis.mappers.ProductionMapper;
 import org.apache.ibatis.session.SqlSession;
 
 import javax.inject.Inject;
@@ -14,30 +14,30 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 
-@Path("/items")
-public class ItemApi {
+@Path("/productions")
+public class ProductionApi {
 
     @Inject
     private SqlSession session;
 
     @Inject
-    private ItemMapper itemMapper;
+    private ProductionMapper productionMapper;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllItems() {
+    public Response getAll() {
 
         Map<String, Object> result = new HashMap<>();
 
-        List<Item> originItems = itemMapper.findAll();
+        List<Production> originProductions = productionMapper.findAll();
 
-        List<Map> items = originItems
+        List<Map> productions = originProductions
                 .stream()
-                .map(item -> item.toMap())
+                .map(production -> production.toMap())
                 .collect(Collectors.toList());
 
-        result.put("items", items);
-        result.put("totalCount", items.size());
+        result.put("productions", productions);
+        result.put("totalCount", productions.size());
 
         return Response.status(Response.Status.OK).entity(result).build();
     }
@@ -45,18 +45,18 @@ public class ItemApi {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getItemsById(@PathParam("id") Integer id) {
-        Item item = itemMapper.findItemById(id);
-        if (item == null) {
+    public Response getById(@PathParam("id") Integer id) {
+        Production production = productionMapper.findById(id);
+        if (production == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        return Response.status(Response.Status.OK).entity(item.toMap()).build();
+        return Response.status(Response.Status.OK).entity(production.toMap()).build();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response insertItem(Map data) {
+    public Response insert(Map data) {
 
         Double price = (Double) data.get("price");
         String name = (String) data.get("name");
@@ -65,17 +65,17 @@ public class ItemApi {
             categoryId = (Integer) data.get("categoryId");
         }
 
-        Item item = new Item();
-        item.setPrice(price);
-        item.setName(name);
-        item.setCategoryId(categoryId);
+        Production production = new Production();
+        production.setPrice(price);
+        production.setName(name);
+        production.setCategoryId(categoryId);
 
-        itemMapper.insertItem(item);
-        Integer id = item.getId();
+        productionMapper.insert(production);
+        Integer id = production.getId();
 
         session.commit();
         Map result = new HashMap();
-        result.put("itemUri", "items/" + id);
+        result.put("productionUri", "productions/" + id);
 
         return Response.status(Response.Status.CREATED).entity(result).build();
     }
@@ -83,8 +83,8 @@ public class ItemApi {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response insertItem(@PathParam("id") Integer id) {
-        System.out.println(itemMapper.deleteItemById(id));
+    public Response insert(@PathParam("id") Integer id) {
+        System.out.println(productionMapper.deleteById(id));
         session.commit();
         return Response.status(Response.Status.NO_CONTENT).build();
     }
@@ -93,16 +93,16 @@ public class ItemApi {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateItem(
+    public Response update(
             @PathParam("id") Integer id,
             Map data) {
-        Item item = new Item();
-        item.setId(id);
-        item.setName((String) data.get("name"));
-        item.setPrice((Double) data.get("price"));
-        item.setCategoryId((Integer) data.get("categoryId"));
+        Production production = new Production();
+        production.setId(id);
+        production.setName((String) data.get("name"));
+        production.setPrice((Double) data.get("price"));
+        production.setCategoryId((Integer) data.get("categoryId"));
 
-        itemMapper.updateItem(item);
+        productionMapper.update(production);
         session.commit();
         return Response.status(Response.Status.NO_CONTENT).build();
     }

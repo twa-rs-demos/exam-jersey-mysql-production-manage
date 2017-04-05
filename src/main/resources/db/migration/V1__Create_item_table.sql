@@ -1,4 +1,4 @@
-CREATE TABLE `item` (
+CREATE TABLE `production` (
      `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
      `price` double unsigned NOT NULL DEFAULT '0',
      `name` varchar(255) DEFAULT NULL,

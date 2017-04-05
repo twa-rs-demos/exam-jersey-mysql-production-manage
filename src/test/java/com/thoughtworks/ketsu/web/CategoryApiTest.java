@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.thoughtworks.ketsu.support.ApiSupport;
 import com.thoughtworks.ketsu.support.ApiTestRunner;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -19,7 +20,18 @@ import static org.hamcrest.core.Is.is;
 @RunWith(ApiTestRunner.class)
 public class CategoryApiTest extends ApiSupport {
 
-    String basePath = "/categories";
+    private String basePath = "/categories";
+    private Map data;
+    private Entity entity;
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        data = new HashMap();
+        data.put("name", "success");
+        entity = Entity.entity(data, MediaType.APPLICATION_JSON_TYPE);
+    }
 
     @Test
     public void should_return_all_categories() throws Exception {
@@ -31,7 +43,7 @@ public class CategoryApiTest extends ApiSupport {
         Gson gson = new GsonBuilder().create();
 
         String jsonStr = gson.toJson(result);
-        assertThat(jsonStr, is("{\"totalCount\":5,\"items\":[{\"categoryUri\":\"categories/1\",\"name\":\"all\",\"id\":1},{\"categoryUri\":\"categories/2\",\"name\":\"fruits\",\"id\":2},{\"categoryUri\":\"categories/3\",\"name\":\"tools\",\"id\":3},{\"categoryUri\":\"categories/4\",\"name\":\"all-test\",\"id\":4},{\"categoryUri\":\"categories/5\",\"name\":\"success\",\"id\":5}]}"));
+        assertThat(jsonStr, is( "{\"categories\":[{\"categoryUri\":\"categories/1\",\"name\":\"all\",\"id\":1},{\"categoryUri\":\"categories/2\",\"name\":\"fruits\",\"id\":2},{\"categoryUri\":\"categories/3\",\"name\":\"tools\",\"id\":3},{\"categoryUri\":\"categories/4\",\"name\":\"success\",\"id\":4},{\"categoryUri\":\"categories/5\",\"name\":\"success\",\"id\":5}],\"totalCount\":5}"));
     }
 
     @Test
@@ -55,9 +67,7 @@ public class CategoryApiTest extends ApiSupport {
 
     @Test
     public void should_insert_category_success() throws Exception {
-        Map data = new HashMap();
-        data.put("name", "success");
-        Entity entity = Entity.entity(data, MediaType.APPLICATION_JSON_TYPE);
+
         Response response = target(basePath).request().post(entity);
         assertThat(response.getStatus(), is(201));
     }
@@ -76,9 +86,7 @@ public class CategoryApiTest extends ApiSupport {
 
     @Test
     public void should_update_category_success() throws Exception {
-        Map data = new HashMap();
-        Entity entity = Entity.entity(data, MediaType.APPLICATION_JSON_TYPE);
-        Response response = target(basePath + "/4").queryParam("name","all-test").request().put(entity);
+        Response response = target(basePath + "/4").request().put(entity);
         assertThat(response.getStatus(), is(204));
     }
 }
