@@ -12,39 +12,47 @@ mediaType: application/json
             schema: |
               {
                 "$schema": "http://json-schema.org/draft-04/schema#",
-                "type": "array",
+                "type": "object",
+                "totalCount": {
+                  "type": "integer",
+                  "required": true
+                },
                 "productions": {
-                  "type": "object",
-                  "properties": {
-                    "price": {
-                      "type": "number"
-                    },
-                    "name": {
-                      "type": "string"
-                    },
-                    "categoryUri": {
-                      "type": "string"
-                    },
-                    "id": {
-                      "type": "integer"
-                    },
-                    "categoryId": {
-                      "type": "integer"
-                     }
-                  },
-                  "required": ["price", "name", "categoryUri", "id", "categoryId"]
+                  "type": "array",
+                  "productions": {
+                    "type": "object",
+                    "properties": {
+                      "price": {
+                        "type": "number"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "categoryUri": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "categoryId": {
+                        "type": "integer"
+                      },
+                      "required": ["price", "name", "categoryUri", "id", "categoryId"]
+                    }
+                  }
                 }
               }
             example: |
-              [
-                {
+              {
+                "totalCount": 1,
+                "productions": [ {
                   "price": 10,
                   "categoryUri": "categories/2",
                   "name": "apple",
                   "id": 1,
                   "categoryId": 2
-                }
-              ]
+                }]
+              }
 
   post:
     description: As a admin I can create a production so that customer can buy the production
@@ -83,10 +91,10 @@ mediaType: application/json
                 "type": "object",
                 "properties": {
                   "productionUri": {
-                    "type": "string"
+                    "type": "string",
+                    "required": true
                   }
-                },
-                "required": ["productionUri"]
+                }
               }
             example: |
               {
@@ -288,9 +296,9 @@ mediaType: application/json
                     },
                     "id": {
                       "type": "integer"
-                     }
-                  },
-                  "required": ["name", "categoryUri", "id"]
+                     },
+                    "required": ["name", "categoryUri", "id"]
+                  }
                 }
               example: |
                 {
@@ -339,7 +347,7 @@ mediaType: application/json
              }
           example: |
             {
-              "meaasge": "该分类下还有商品，不能删除"
+              "name": "watermelon"
             }
       responses:
         204:
